@@ -36,7 +36,7 @@ class LineNotify:
             self.session = requests.session()
             for key, value in {'XSRF-TOKEN': XSRF_TOKEN, 'SESSION': SESSION_ID}.items():
                 self.session.cookies.set_cookie(requests.cookies.create_cookie(key, value))
-            self.session.headers = LineNotify.HEADERS
+            self.session.headers = LineNotify.HEADERS.copy()
             
         def request(self, method, path, params={}, data=None, json=None):
             return getattr(self.session, method)(LineNotify.BASE_URL + path, params=params, data=data, json=json)
@@ -65,7 +65,8 @@ class LineNotify:
     class Client:
         def __init__(self, access_token):
             self.session = requests.session()
-            self.session.headers = LineNotify.HEADERS
+            self.session.headers = LineNotify.HEADERS.copy()
+            self.session.headers.update({'Authorization': 'Bearer %s' % (access_token)})
 
         def request(self, method, path, params={}, data=None, json=None):
             return getattr(self.session, method)(LineNotify.API_URL + path, params=params, data=data, json=json)
